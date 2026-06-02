@@ -1,0 +1,153 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile containing identity, preferences, and metadata",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique Firebase Auth User UID"
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address"
+        },
+        "fullName": {
+          "type": "string",
+          "description": "Full display name of the user"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp indicating when the user profile was registered"
+        },
+        "picture": {
+          "type": "string",
+          "description": "Optional profile picture URL or base64 data"
+        },
+        "preferences": {
+          "type": "object",
+          "description": "User's interest preferences"
+        }
+      },
+      "required": ["id", "email", "fullName", "createdAt"]
+    },
+    "PolishedCV": {
+      "title": "PolishedCV",
+      "description": "Polished CV document created by a user",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique CV ID generated on client or server"
+        },
+        "userId": {
+          "type": "string",
+          "description": "The UID of the user who owns this CV"
+        },
+        "title": {
+          "type": "string",
+          "description": "Brief description or title of the CV"
+        },
+        "template": {
+          "type": "string",
+          "description": "Design template category"
+        },
+        "summary": {
+          "type": "string",
+          "description": "Summary statement or bio of the candidate"
+        },
+        "education": {
+          "type": "string",
+          "description": "Education background"
+        },
+        "projects": {
+          "type": "string",
+          "description": "Polished projects narrative or list"
+        },
+        "activities": {
+          "type": "string",
+          "description": "Polished extra activities narrative or list"
+        },
+        "skills": {
+          "type": "array",
+          "description": "Parsed skill tags list"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name printed on CV"
+        },
+        "email": {
+          "type": "string",
+          "description": "Email printed on CV"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Phone printed on CV"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "description": "ISO timestamp of last update"
+        },
+        "photoUrl": {
+          "type": "string",
+          "description": "Optional photo URL on CV"
+        }
+      },
+      "required": ["id", "userId", "title", "template", "summary", "name", "email", "phone", "lastUpdated"]
+    },
+    "JobApplication": {
+      "title": "JobApplication",
+      "description": "Job application submitted by a student to a job posting",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique application ID"
+        },
+        "userId": {
+          "type": "string",
+          "description": "UID of the user applying"
+        },
+        "jobId": {
+          "type": "string",
+          "description": "ID of the vacany/job being applied to"
+        },
+        "cvId": {
+          "type": "string",
+          "description": "ID of the polished CV submitted"
+        },
+        "appliedAt": {
+          "type": "string",
+          "description": "ISO timestamp of application submission"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["submitted", "processing", "under_review"],
+          "description": "Status of the application review"
+        }
+      },
+      "required": ["id", "userId", "jobId", "cvId", "appliedAt", "status"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/User"
+      },
+      "description": "Profiles collection for authenticated users"
+    },
+    "users/{userId}/cvs/{cvId}": {
+      "schema": {
+        "$ref": "#/entities/PolishedCV"
+      },
+      "description": "User's collection of polished CVs"
+    },
+    "users/{userId}/applications/{applicationId}": {
+      "schema": {
+        "$ref": "#/entities/JobApplication"
+      },
+      "description": "User's submitted job applications registry"
+    }
+  }
+}

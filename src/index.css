@@ -1,0 +1,198 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-primary-hover: var(--brand-primary-hover);
+  --color-brand-primary-light: var(--brand-primary-light);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-brand-secondary-hover: var(--brand-secondary-hover);
+  --color-brand-accent: var(--brand-accent);
+  
+  --color-theme-bg: var(--theme-bg);
+  --color-theme-text: var(--theme-text);
+  --color-theme-text-muted: var(--theme-text-muted);
+  --color-theme-card-bg: var(--theme-card-bg);
+  --color-theme-card-border: var(--theme-card-border);
+  --color-theme-input-bg: var(--theme-input-bg);
+  --color-theme-nav-bg: var(--theme-nav-bg);
+  --color-theme-nav-text: var(--theme-nav-text);
+}
+
+/* Custom scrollbar and subtle dashboard animations */
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--theme-bg, #ffffff);
+    color: var(--theme-text, #0f1f35);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+/* Dynamic Mode-Dark UI modifiers */
+.mode-dark .bg-white,
+.mode-dark .bg-\[\#FFFFFF\] {
+  background-color: var(--theme-card-bg) !important;
+}
+
+.mode-dark .bg-white\/95 {
+  background-color: var(--theme-nav-bg) !important;
+}
+
+.mode-dark .bg-slate-50,
+.mode-dark .bg-slate-50\/50,
+.mode-dark .bg-slate-100,
+.mode-dark .bg-slate-100\/50,
+.mode-dark .bg-slate-200,
+.mode-dark .bg-gray-50,
+.mode-dark .bg-gray-100,
+.mode-dark .bg-gray-200 {
+  background-color: var(--theme-input-bg) !important;
+}
+
+.mode-dark .hover\:bg-slate-50:hover,
+.mode-dark .focus\:bg-white:focus {
+  background-color: var(--theme-input-bg) !important;
+}
+
+.mode-dark .border-slate-50,
+.mode-dark .border-slate-100,
+.mode-dark .border-slate-200,
+.mode-dark .border-slate-200\/50,
+.mode-dark .border-slate-100\/80,
+.mode-dark .border-slate-300,
+.mode-dark .border-gray-100,
+.mode-dark .border-gray-200 {
+  border-color: var(--theme-card-border) !important;
+}
+
+.mode-dark .text-\[\#0f1f35\],
+.mode-dark .text-\[\#0f1f35\]\/95,
+.mode-dark .text-\[\#0f1f35\]\/90,
+.mode-dark .text-slate-950,
+.mode-dark .text-slate-900,
+.mode-dark .text-slate-800,
+.mode-dark .text-slate-700,
+.mode-dark .text-gray-900,
+.mode-dark .text-gray-800,
+.mode-dark .text-gray-700 {
+  color: var(--theme-text) !important;
+}
+
+.mode-dark .text-\[\#0f1f35\]\/85,
+.mode-dark .text-\[\#0f1f35\]\/80,
+.mode-dark .text-\[\#0f1f35\]\/75,
+.mode-dark .text-\[\#0f1f35\]\/70,
+.mode-dark .text-slate-600,
+.mode-dark .text-slate-500,
+.mode-dark .text-slate-400,
+.mode-dark .text-gray-600,
+.mode-dark .text-gray-500,
+.mode-dark .text-gray-400 {
+  color: var(--theme-text-muted) !important;
+}
+
+/* Accent Containers (emerald, red) */
+.mode-dark .bg-emerald-50,
+.mode-dark .bg-emerald-50\/70,
+.mode-dark .bg-emerald-100 {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+.mode-dark .text-emerald-600,
+.mode-dark .text-emerald-700,
+.mode-dark .text-emerald-800 {
+  color: #34d399 !important; /* Tailwind's emerald-400 */
+}
+
+.mode-dark .bg-red-50,
+.mode-dark .bg-red-50\/70,
+.mode-dark .bg-red-100 {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+}
+
+.mode-dark .text-red-500,
+.mode-dark .text-red-600,
+.mode-dark .text-red-700 {
+  color: #f87171 !important; /* Tailwind's red-400 */
+}
+
+/* SVGs and subtle Icons */
+.mode-dark .text-slate-300,
+.mode-dark .text-slate-200 {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Modal overlays */
+.mode-dark .bg-slate-900\/60 {
+  background-color: rgba(0, 0, 0, 0.75) !important;
+}
+
+/* Soothing backgrounds & low opacity for grid lines / decoration */
+.mode-dark div[class*="radial-gradient"] {
+  opacity: 0.12 !important;
+}
+
+.mode-dark div[class*="from-brand-secondary/10"] {
+  opacity: 0.4 !important;
+}
+
+/* Inputs, Textareas, Selects */
+.mode-dark input,
+.mode-dark textarea,
+.mode-dark select {
+  background-color: var(--theme-input-bg) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-card-border) !important;
+}
+
+.mode-dark input::placeholder,
+.mode-dark textarea::placeholder {
+  color: var(--theme-text-muted) !important;
+  opacity: 0.6;
+}
+
+/* Custom dark mode container overrides to make everything darker and integrated */
+.mode-dark .bg-brand-primary-light,
+.mode-dark [class*="bg-brand-primary-light"] {
+  background-color: var(--theme-input-bg) !important;
+  border-color: var(--theme-card-border) !important;
+}
+
+.mode-dark .bg-emerald-50\/50,
+.mode-dark .bg-emerald-50 {
+  background-color: rgba(16, 185, 129, 0.08) !important;
+}
+
+.mode-dark .bg-amber-55\/10,
+.mode-dark .bg-amber-50\/10,
+.mode-dark .bg-amber-50 {
+  background-color: rgba(245, 158, 11, 0.08) !important;
+}
+
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  #printable-cv-container, #printable-cv-container * {
+    visibility: visible !important;
+  }
+  #printable-cv-container {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: white !important;
+    color: black !important;
+  }
+  html, body {
+    background: white !important;
+  }
+}

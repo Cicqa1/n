@@ -1,0 +1,108 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- 1. Global Safety Net ---
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- 2. Reusable Primitives & Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return !isSignedIn() || (request.auth != null && request.auth.uid == userId);
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- 3. Entity-Level Validation Blueprints ---
+
+    // Validate User Profile Shape
+    function isValidUser(userId, data) {
+      return data.keys().hasAll(['id', 'email', 'fullName', 'createdAt'])
+        && data.id == userId
+        && data.email is string && data.email.size() <= 128
+        && data.fullName is string && data.fullName.size() <= 200
+        && data.createdAt is string && data.createdAt.size() <= 50
+        && (!data.keys().contains('picture') || (data.picture is string && data.picture.size() <= 5000))
+        && (!data.keys().contains('preferences') || data.preferences is map);
+    }
+
+    // Validate Polished CV Shape
+    function isValidCV(userId, data) {
+      return data.keys().hasAll(['id', 'userId', 'title', 'template', 'summary', 'education', 'projects', 'activities', 'skills', 'name', 'email', 'phone', 'lastUpdated'])
+        && data.id is string && data.id.size() <= 128
+        && data.userId == userId
+        && data.title is string && data.title.size() <= 250
+        && data.template is string && data.template.size() <= 100
+        && data.summary is string && data.summary.size() <= 5000
+        && data.education is string && data.education.size() <= 5000
+        && data.projects is string && data.projects.size() <= 8000
+        && data.activities is string && data.activities.size() <= 5000
+        && data.skills is list && data.skills.size() <= 100
+        && (data.skills.size() == 0 || data.skills[0] is string)
+        && data.name is string && data.name.size() <= 200
+        && data.email is string && data.email.size() <= 128
+        && data.phone is string && data.phone.size() <= 100
+        && data.lastUpdated is string && data.lastUpdated.size() <= 50
+        && (!data.keys().contains('photoUrl') || (data.photoUrl is string && data.photoUrl.size() <= 1000000));
+    }
+
+    // Validate Job Application Shape
+    function isValidApplication(userId, data) {
+      return data.keys().hasAll(['id', 'userId', 'jobId', 'cvId', 'appliedAt', 'status'])
+        && data.id is string && data.id.size() <= 128
+        && data.userId == userId
+        && data.jobId is string && data.jobId.size() <= 128
+        && data.cvId is string && data.cvId.size() <= 128
+        && data.appliedAt is string && data.appliedAt.size() <= 50
+        && data.status is string && data.status in ['submitted', 'processing', 'under_review'];
+    }
+
+    // --- 4. Secured Path Mappings ---
+
+    // Users Collection Root
+    match /users/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow create: if isOwner(userId) && isValidId(userId) && isValidUser(userId, incoming());
+      allow update: if isOwner(userId) && isValidId(userId) && isValidUser(userId, incoming()) && incoming().createdAt == existing().createdAt;
+      allow delete: if isOwner(userId) && isValidId(userId);
+
+      // User's Subcollections
+      // Polished CVs Path
+      match /cvs/{cvId} {
+        allow get, delete: if isOwner(userId) && isValidId(cvId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(cvId) && isValidCV(userId, incoming());
+        allow update: if isOwner(userId) && isValidId(cvId) && isValidCV(userId, incoming()) 
+          && incoming().id == existing().id 
+          && incoming().userId == existing().userId;
+      }
+
+      // Job Applications Path
+      match /applications/{applicationId} {
+        allow get, delete: if isOwner(userId) && isValidId(applicationId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(applicationId) && isValidApplication(userId, incoming());
+        allow update: if isOwner(userId) && isValidId(applicationId) && isValidApplication(userId, incoming())
+          && incoming().id == existing().id
+          && incoming().userId == existing().userId
+          && incoming().jobId == existing().jobId
+          && incoming().cvId == existing().cvId;
+      }
+    }
+  }
+}
